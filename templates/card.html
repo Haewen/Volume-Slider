@@ -1,0 +1,35 @@
+<div class="card-header">
+  <div class="d-flex p-2">
+    <h2 style="flex: 1;">{{session.name}}</h2>
+    {% if session.is_muted %}
+    <i
+      class="fas fa-volume-mute fa-2x"
+      style="align-self: center;"
+      onclick="unmute(this)"
+      pid="{{session.process_id}}"
+    ></i>
+    {% else %}
+    <i
+      class="fas fa-volume-up fa-2x"
+      style="align-self: center;"
+      onclick="mute(this)"
+      pid="{{session.process_id}}"
+    ></i>
+    {% endif %}
+  </div>
+</div>
+<div class="card-body">
+  <form id="{{session.process_id}}">
+    <div class="form-group">
+      <input
+        type="range"
+        class="custom-range"
+        min="0"
+        max="100"
+        value="{{session.volume
+        * 100}}"
+        onchange="changeVolume(this)"
+      />
+    </div>
+  </form>
+</div>

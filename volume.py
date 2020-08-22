@@ -20,6 +20,20 @@ def get_session_data():
     return data
 
 
+def get_session(pid):
+    sessions = get_sessions()
+    for session in sessions:
+        if session.Process and session.Process.pid == pid:
+            volume = session.SimpleAudioVolume
+            session_data = {}
+            session_data["name"] = session.Process.name()
+            session_data["process_id"] = session.Process.pid
+            session_data["is_muted"] = volume.GetMute()
+            session_data["volume"] = volume.GetMasterVolume()
+            return session_data
+    return None
+
+
 def get_session_volume(pid):
     sessions = get_sessions()
     for session in sessions:

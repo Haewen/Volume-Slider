@@ -31,9 +31,8 @@ def mute():
     json = request.get_json()
     pid = int(json["pid"])
     to_mute = bool(json["mute"])
-    print(to_mute)
     set_mute_process(pid, to_mute)
-    return {"pid": pid, "mute": "mute"}
+    return render_template("card.html", session=get_session(pid))
 
 
 if __name__ == '__main__':
