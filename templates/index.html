@@ -17,6 +17,42 @@
   <body>
     <div class="card" id="container">
       <div class="card-body">
+        <div class="card card text-white bg-secondary" id=master>
+          <div class="card-header">
+            <div class="d-flex p-2">
+              <h2 style="flex: 1;">Master</h2>
+              {% if master.is_muted %}
+              <i
+                class="fas fa-volume-mute fa-2x"
+                style="align-self: center;"
+                onclick="unmuteMaster()"
+              ></i>
+              {% else %}
+              <i
+                class="fas fa-volume-up fa-2x"
+                style="align-self: center;"
+                onclick="muteMaster()"
+              ></i>
+              {% endif %}
+            </div>
+          </div>
+          <div class="card-body">
+            <form id="{{session.process_id}}">
+              <div class="form-group">
+                <input
+                  type="range"
+                  class="custom-range"
+                  min="0"
+                  max="100"
+                  value="{{master.volume
+                * 100}}"
+                onchange="changeMasterVolume(this)"
+                />
+              </div>
+            </form>
+          </div>
+        </div>
+        <hr />
         {% for session in sessions %}
         <div class="card card text-white bg-secondary" id={{ "div" ~ session.process_id}}>
           <div class="card-header">
@@ -65,6 +101,43 @@
       integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
       crossorigin="anonymous"
     ></script>
+    <script>
+      function muteMaster()
+      {
+        muteUnmuteMaster(true);
+      }
+
+      function unmuteMaster()
+      {
+        muteUnmuteMaster(false);
+      }
+      function muteUnmuteMaster(mute)
+      {
+        $.ajax({
+          type: "POST",
+          url: "mutemaster",
+          data: JSON.stringify({
+            mute: mute,
+          }),
+          contentType: "application/json",
+          dataType: "html",
+          success: function (data) {
+              $("#master").html(data);
+            },
+        });
+      }
+      function changeMasterVolume(source)
+      {
+        $.ajax({
+          type: "POST",
+          url: "mastervolume",
+          data: JSON.stringify({
+            volume: source.value,
+          }),
+          contentType: "application/json",
+        });
+      }
+    </script>
     <script>
       function changeVolume(source){
         let pid = $(source).closest("form").attr("id");

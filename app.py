@@ -14,7 +14,8 @@ app = Flask(__name__)
 def root():
     pythoncom.CoInitialize()
     sessions = get_session_data()
-    return render_template("index.html", sessions=sessions)
+    master = get_master_data()
+    return render_template("index.html", sessions=sessions, master=master)
 
 
 @app.route('/volume', methods=["POST"])
@@ -33,6 +34,22 @@ def mute():
     to_mute = bool(json["mute"])
     set_mute_process(pid, to_mute)
     return render_template("card.html", session=get_session(pid))
+
+
+@app.route('/mutemaster', methods=["POST"])
+def mutemaster():
+    json = request.get_json()
+    to_mute = bool(json["mute"])
+    set_mute_master(to_mute)
+    return render_template("master_card.html", master=get_master_data())
+
+
+@app.route('/mastervolume', methods=["POST"])
+def mastervolume():
+    json = request.get_json()
+    volume = int(json["volume"]) / 100.
+    set_master_volume(volume)
+    return {"volume": volume}
 
 
 if __name__ == '__main__':

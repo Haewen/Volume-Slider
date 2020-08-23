@@ -1,4 +1,10 @@
-from pycaw.pycaw import AudioUtilities
+from __future__ import print_function
+
+from ctypes import POINTER, cast
+
+from comtypes import CLSCTX_ALL
+
+from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 
 
 def get_sessions():
@@ -67,3 +73,38 @@ def get_mute_for_process(pid):
     volume = get_session_volume(pid)
     if volume:
         return volume.GetMute()
+
+
+def get_master_session():
+    devices = AudioUtilities.GetSpeakers()
+    interface = devices.Activate(
+        IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+    return cast(interface, POINTER(IAudioEndpointVolume))
+
+
+def get_master_data():
+    session = get_master_session()
+    master_data = {}
+    master_data["is_muted"] = session.GetMute()
+    master_data["volume"] = session.GetMasterVolumeLevelScalar()
+    return master_data
+
+
+def get_master_volume():
+    session = get_master_session()
+    return session.GetMasterVolumeLevelScalar()
+
+
+def get_mute_master():
+    session = get_master_session()
+    return session.GetMute()
+
+
+def set_master_volume(volume_level):
+    session = get_master_session()
+    session.SetMasterVolumeLevelScalar(volume_level, None)
+
+
+def set_mute_master(mute):
+    session = get_master_session()
+    session.SetMute(1 if mute else 0, None)
