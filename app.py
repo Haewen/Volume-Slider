@@ -2,12 +2,28 @@ from flask import Flask
 from flask import render_template
 from flask import request
 import pythoncom
+import sys
+import os
 
 from volume import *
 from flask.helpers import url_for
 from werkzeug.utils import redirect
 
-app = Flask(__name__)
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(
+        os.path.abspath(__file__)))
+    return os.path.join(base_path, relative_path)
+
+
+if getattr(sys, 'frozen', False):
+    template_folder = resource_path('templates')
+    static_folder = resource_path('static')
+    app = Flask(__name__, template_folder=template_folder,
+                static_folder=static_folder)
+else:
+    app = Flask(__name__)
 
 
 @app.route('/')
