@@ -12,6 +12,6 @@ A small application that makes it possible to control the volume of processes fr
 
 ## Screenshots
 
-![Image of the application](showcase_browser.png)
-
 ![Image of the application](showcase_phone.png)
+
+![Image of the application](showcase_browser.png)
